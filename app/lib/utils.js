@@ -1,7 +1,7 @@
 // Import statements are not needed in JavaScript.
 
 // Function to format currency
-const formatCurrency = (amount) => {
+export const formatCurrency = (amount) => {
   return (amount / 100).toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
@@ -9,7 +9,7 @@ const formatCurrency = (amount) => {
 };
 
 // Function to format date to local
-const formatDateToLocal = (dateStr, locale = "en-US") => {
+export const formatDateToLocal = (dateStr, locale = "en-US") => {
   const date = new Date(dateStr);
   const options = {
     day: "numeric",
@@ -21,9 +21,9 @@ const formatDateToLocal = (dateStr, locale = "en-US") => {
 };
 
 // Function to generate Y-axis labels
-const generateYAxis = (revenue) => {
+export const generateYAxis = (revenue) => {
   const yAxisLabels = [];
-  const highestRecord = Math.max(...revenue.map((month) => month.revenue));
+  const highestRecord = Math.max(...revenue?.map((month) => month.revenue));
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
 
   for (let i = topLabel; i >= 0; i -= 1000) {
@@ -34,7 +34,7 @@ const generateYAxis = (revenue) => {
 };
 
 // Function to generate pagination
-const generatePagination = (currentPage, totalPages) => {
+export const generatePagination = (currentPage, totalPages) => {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }

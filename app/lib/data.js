@@ -1,17 +1,23 @@
 import { sql } from "@vercel/postgres";
 import { formatCurrency } from "./utils";
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function fetchRevenue() {
+  noStore();
+
   try {
+    console.log("Fetching revenue data...");
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     const data = await sql`SELECT * FROM revenue`;
+    console.log("Data fetch complete after 3 seconds.");
     return data.rows;
   } catch (error) {
     console.error("Database Error:", error);
-    throw new Error("Failed to fetch revenue data.");
   }
 }
 
 export async function fetchLatestInvoices() {
+  noStore();
   try {
     const data = await sql`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -27,11 +33,11 @@ export async function fetchLatestInvoices() {
     return latestInvoices;
   } catch (error) {
     console.error("Database Error:", error);
-   
   }
 }
 
 export async function fetchCardData() {
+  noStore();
   try {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
@@ -50,6 +56,7 @@ export async function fetchCardData() {
     const numberOfCustomers = Number(data[1].rows[0].count ?? "0");
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? "0");
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? "0");
+    // console.log(numberOfCustomers,numberOfInvoices,totalPaidInvoices,totalPendingInvoices)
 
     return {
       numberOfCustomers,
@@ -59,12 +66,12 @@ export async function fetchCardData() {
     };
   } catch (error) {
     console.error("Database Error:", error);
-   
   }
 }
 
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(query, currentPage) {
+  noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -92,11 +99,11 @@ export async function fetchFilteredInvoices(query, currentPage) {
     return invoices.rows;
   } catch (error) {
     console.error("Database Error:", error);
-   
   }
 }
 
 export async function fetchInvoicesPages(query) {
+  noStore();
   try {
     const count = await sql`
       SELECT COUNT(*)
@@ -113,11 +120,11 @@ export async function fetchInvoicesPages(query) {
     return totalPages;
   } catch (error) {
     console.error("Database Error:", error);
-  
   }
 }
 
 export async function fetchInvoiceById(id) {
+  noStore();
   try {
     const data = await sql`
       SELECT
@@ -131,6 +138,7 @@ export async function fetchInvoiceById(id) {
       ...invoice,
       amount: invoice.amount / 100,
     }));
+     console.log(invoice);
     return invoice[0];
   } catch (error) {
     console.error("Database Error:", error);
@@ -138,6 +146,7 @@ export async function fetchInvoiceById(id) {
 }
 
 export async function fetchCustomers() {
+  noStore();
   try {
     const data = await sql`
       SELECT
@@ -149,11 +158,11 @@ export async function fetchCustomers() {
     return customers;
   } catch (err) {
     console.error("Database Error:", err);
-   
   }
 }
 
 export async function fetchFilteredCustomers(query) {
+  noStore();
   try {
     const data = await sql`
 		SELECT
@@ -182,17 +191,16 @@ export async function fetchFilteredCustomers(query) {
     return customers;
   } catch (err) {
     console.error("Database Error:", err);
-  
   }
 }
 
 export async function getUser(email) {
+  noStore();
   try {
     const user = await sql`
       SELECT * from USERS where email=${email}`;
     return user.rows[0];
   } catch (error) {
     console.error("Failed to fetch user:", error);
-   
   }
 }

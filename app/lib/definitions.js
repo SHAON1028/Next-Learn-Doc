@@ -12,7 +12,7 @@ const Customer = {
   image_url: "",
 };
 
-const Invoice = {
+export const Invoice = {
   id: "",
   customer_id: "",
   amount: 0,
